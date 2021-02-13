@@ -223,7 +223,82 @@ These exercises will reiterate what you learned in the "Mapping data with R" tut
 
 ### Starbucks locations (`ggmap`)
 
-  1. Add the `Starbucks` locations to a world map. Add an aesthetic to the world map that sets the color of the points according to the ownership type. What, if anything, can you deduce from this visualization?  
+  1. Add the `Starbucks` locations to a world map. Add an aesthetic to the world map that sets the color of the points according to the ownership type. What, if anything, can you deduce from this visualization? 
+  
+
+```r
+world_map <- get_stamenmap(
+    bbox = c(left = -180, bottom = -57, right = 179, top = 82.1), 
+    maptype = "terrain",
+    zoom = 2)
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/0/0.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/1/0.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/2/0.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/3/0.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/0/1.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/1/1.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/2/1.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/3/1.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/0/2.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/1/2.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/2/2.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/2/3/2.png
+```
+
+```r
+ggmap(world_map) + 
+  geom_point(data = Starbucks, 
+             aes(x = Longitude, y = Latitude, color = `Ownership Type`), 
+             alpha = .3, 
+             size = .1) +
+  theme_map() +
+  theme(legend.background = element_blank()) +
+  labs(title = "Starbucks locations by ownership type", color = "") 
+```
+
+```
+## Warning: Removed 1 rows containing missing values (geom_point).
+```
+
+![](04_exercises_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+  This visual highlights that most Starbucks in the Americas are company owned or licensed, while in Europe and Asia there are more joint ventures and franchised Starbucks.
+  
 
   2. Construct a new map of Starbucks locations in the Twin Cities metro area (approximately the 5 county metro area).  
 
