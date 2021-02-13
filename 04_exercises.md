@@ -302,9 +302,127 @@ ggmap(world_map) +
 
   2. Construct a new map of Starbucks locations in the Twin Cities metro area (approximately the 5 county metro area).  
 
+```r
+mpls_map <- get_stamenmap(
+    bbox = c(left = -93.4, bottom = 44.85, right = -92.9, top = 45.05), 
+    maptype = "terrain",
+    zoom = 11)
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/492/736.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/493/736.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/494/736.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/495/736.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/492/737.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/493/737.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/494/737.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/495/737.png
+```
+
+```r
+ggmap(mpls_map) + 
+  geom_point(data = Starbucks, 
+             aes(x = Longitude, y = Latitude), 
+             alpha = 1, 
+             size = 1) +
+  theme_map() +
+  theme(legend.background = element_blank()) +
+  labs(title = "Starbucks locations in MSP")
+```
+
+```
+## Warning: Removed 25527 rows containing missing values (geom_point).
+```
+
+![](04_exercises_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+
   3. In the Twin Cities plot, play with the zoom number. What does it do?  (just describe what it does - don't actually include more than one map).  
+  
+  The zoom function shows more detail as you increase the value.
 
   4. Try a couple different map types (see `get_stamenmap()` in help and look at `maptype`). Include a map with one of the other map types.  
+  
+
+```r
+mpls_map <- get_stamenmap(
+    bbox = c(left = -93.4, bottom = 44.85, right = -92.9, top = 45.05), 
+    maptype = "toner",
+    zoom = 11)
+```
+
+```
+## Source : http://tile.stamen.com/toner/11/492/736.png
+```
+
+```
+## Source : http://tile.stamen.com/toner/11/493/736.png
+```
+
+```
+## Source : http://tile.stamen.com/toner/11/494/736.png
+```
+
+```
+## Source : http://tile.stamen.com/toner/11/495/736.png
+```
+
+```
+## Source : http://tile.stamen.com/toner/11/492/737.png
+```
+
+```
+## Source : http://tile.stamen.com/toner/11/493/737.png
+```
+
+```
+## Source : http://tile.stamen.com/toner/11/494/737.png
+```
+
+```
+## Source : http://tile.stamen.com/toner/11/495/737.png
+```
+
+```r
+ggmap(mpls_map) + 
+  geom_point(data = Starbucks, 
+             aes(x = Longitude, y = Latitude), 
+             alpha = 1, 
+             size = 1, 
+             color = "green") +
+  theme_map() +
+  theme(legend.background = element_blank()) +
+  labs(title = "Starbucks locations in MSP")
+```
+
+```
+## Warning: Removed 25527 rows containing missing values (geom_point).
+```
+
+![](04_exercises_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+  
 
   5. Add a point to the map that indicates Macalester College and label it appropriately. There are many ways you can do think, but I think it's easiest with the `annotate()` function (see `ggplot2` cheatsheet).
 
