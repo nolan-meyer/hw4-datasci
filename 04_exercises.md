@@ -425,6 +425,33 @@ ggmap(mpls_map) +
   
 
   5. Add a point to the map that indicates Macalester College and label it appropriately. There are many ways you can do think, but I think it's easiest with the `annotate()` function (see `ggplot2` cheatsheet).
+  
+
+```r
+mpls_map <- get_stamenmap(
+    bbox = c(left = -93.4, bottom = 44.85, right = -92.9, top = 45.05), 
+    maptype = "toner",
+    zoom = 11)
+
+ggmap(mpls_map) + 
+  geom_point(data = Starbucks, 
+             aes(x = Longitude, y = Latitude), 
+             alpha = 1, 
+             size = 1, 
+             color = "green") +
+  theme_map() +
+  theme(legend.background = element_blank()) +
+  labs(title = "Starbucks locations in MSP") +
+  annotate(geom = "point", x = -93.165, y = 44.935, color = "blue") +
+  annotate(geom = "text", x = -93.165, y = 44.94, label = "Mac", color = "blue")
+```
+
+```
+## Warning: Removed 25527 rows containing missing values (geom_point).
+```
+
+![](04_exercises_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+  
 
 ### Choropleth maps with Starbucks data (`geom_map()`)
 
