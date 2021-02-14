@@ -546,7 +546,7 @@ Here is the code to read in the data. We do this a little differently than usual
 data_site <- 
   "https://www.macalester.edu/~dshuman1/data/112/2014-Q4-Trips-History-Data.rds" 
 Trips <- readRDS(gzcon(url(data_site)))
-Stations<-read_csv("http://www.macalester.edu/~dshuman1/data/112/DC-Stations.csv")
+Stations <-read_csv("http://www.macalester.edu/~dshuman1/data/112/DC-Stations.csv")
 ```
 
 ```
@@ -564,6 +564,137 @@ Stations<-read_csv("http://www.macalester.edu/~dshuman1/data/112/DC-Stations.csv
   9. Use the latitude and longitude variables in `Stations` to make a visualization of the total number of departures from each station in the `Trips` data. Use either color or size to show the variation in number of departures. This time, plot the points on top of a map. Use any of the mapping tools you'd like.
   
 
+```r
+dep_by_station <- Trips %>% 
+  group_by(sstation) %>% 
+  summarize(n = n()) %>% 
+  left_join(Stations,
+            by = c("sstation" = "name"))
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
+wash_map <- get_stamenmap(
+    bbox = c(left = -77.4, bottom = 38.77, right = -76.6, top = 39.15), 
+    maptype = "terrain",
+    zoom = 11)
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/583/781.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/584/781.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/585/781.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/586/781.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/587/781.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/588/781.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/583/782.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/584/782.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/585/782.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/586/782.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/587/782.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/588/782.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/583/783.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/584/783.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/585/783.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/586/783.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/587/783.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/588/783.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/583/784.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/584/784.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/585/784.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/586/784.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/587/784.png
+```
+
+```
+## Source : http://tile.stamen.com/terrain/11/588/784.png
+```
+
+```r
+ggmap(wash_map) + 
+  geom_point(data = dep_by_station, 
+             aes(x = long, y = lat, color = n), 
+             alpha = 1, 
+             size = 1.5) +
+  theme_map() +
+  labs(title = "Total number of departures by station", color = "") +
+  theme(legend.background = element_blank())
+```
+
+```
+## Warning: Removed 12 rows containing missing values (geom_point).
+```
+
+![](04_exercises_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
   
   10. Only 14.4% of the trips in our data are carried out by casual users. Create a plot that shows which area(s) have stations with a much higher percentage of departures by casual users. What patterns do you notice? Also plot this on top of a map. I think it will be more clear what the patterns are.
   
