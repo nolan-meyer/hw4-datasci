@@ -196,8 +196,33 @@ starbucks_with_2018_pop_est <-
 ```
 
   6. **`dplyr` review**: Look through the code above and describe what each line of code does.
+  
+  Line 1 creates a new data frame and reads in the census data. Line 3 separates the "." from the state name and brings the rest of the name together. Line 4 selects all the columns except "dot". Line 5 changes all of the state names to lowercase. Line 7 creates a new data frame. Line 8 calls the "starbucks_us_by_state" data. Lines 9 & 10 left joins the two data sets, matching cases by their state name and discarding any cases from the census pop. that don't have a match in the starbucks by state data. Line 11 creates a new variable that computes the number of starbucks per 10,000 people. 
+  
 
   7. Create a choropleth map that shows the number of Starbucks per 10,000 people on a map of the US. Use a new fill color, add points for all Starbucks in the US (except Hawaii and Alaska), add an informative title for the plot, and include a caption that says who created the plot (you!). Make a conclusion about what you observe.
+  
+```{r}
+states_map <- map_data("state")
+
+starbucks_with_2018_pop_est %>% 
+  ggplot() +
+  geom_map(map = states_map,
+           aes(map_id = state_name,
+               fill = starbucks_per_10000)) +
+  expand_limits(x = states_map$long, y = states_map$lat) + 
+  geom_point(data = Starbucks %>% filter(Country == "US", `State/Province` != "AK", `State/Province` != "HI"),
+             aes(x = Longitude, y = Latitude),
+             size = .05,
+             alpha = .2, 
+             color = "yellow") +
+  theme_map() +
+  scale_fill_viridis_c(option = "magma") +
+  labs(title = "Starbucks per 10,000 people by state", fill = "", caption = "Created by: Nolan Meyer")
+```
+  
+  A majority of the Starbucks are clustered in cities/regions of high population throughout the United States. Also, the west coast has the highest densities of Starbucks per 10,000 people.
+  
 
 ### A few of your favorite things (`leaflet`)
 
