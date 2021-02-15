@@ -13,7 +13,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
 ```
 
 ```{r libraries}
@@ -236,6 +236,46 @@ starbucks_with_2018_pop_est %>%
   
   * If there are other variables you want to add that could enhance your plot, do that now.  
   
+```{r}
+nolans_favorites <- tibble(
+  place = c("Home","Soccer Field", "Macalester College",
+            "Allianz Field", "3M Headquarters", "ALDI's",
+            "Chipotle", "Mississippi Lookout", "Patagonia", "Mall of America"),
+  long = c(-93.166685, -93.168140, -93.1712321,
+           -93.164724, -92.995494, -93.170834, 
+           -93.188519, -93.199168, -93.170124, -93.241548),
+  lat = c(44.932196, 44.935271, 44.9378965,
+          44.952973, 44.950733, 44.902254, 
+          44.917421, 44.942160, 44.939926, 44.854697),
+  top3 = c(TRUE, TRUE, TRUE, 
+           FALSE, FALSE, FALSE,
+           FALSE, FALSE, FALSE, FALSE)
+  )
+
+nolans_favorites <- nolans_favorites %>% arrange(desc(lat))
+
+
+clr_pal <- colorFactor("plasma", nolans_favorites$top3)
+
+leaflet(data = nolans_favorites) %>% 
+  addTiles() %>% 
+  addCircles(opacity = 1,
+             weight = 10,
+             color = ~clr_pal(top3),
+             popup = ~place) %>% 
+  addLegend(pal = clr_pal, 
+            values = ~top3, 
+            opacity = 0.85, 
+            title = "Top 3 Favorites",
+            position = "bottomright") %>% 
+  addPolylines(lng = ~long, 
+               lat = ~lat,
+               color = col2hex("grey50")) 
+               
+```
+  
+  
+  
 ## Revisiting old datasets
 
 This section will revisit some datasets we have used previously and bring in a mapping component. 
@@ -418,10 +458,10 @@ color_pal <- colorFactor("plasma", MplsStops$problem)
 
 leaflet(data = MplsStops) %>% 
   addTiles() %>% 
-  addCircleMarkers(stroke = FALSE,
-                   weight = 10,
-                   radius = 4,
-                   color = ~color_pal(problem)) %>% 
+  addCircles(weight = 4,
+             radius = 1,
+             opacity = 1,
+             color = ~color_pal(problem)) %>% 
   addLegend(pal = color_pal, 
             values = ~problem, 
             opacity = 0.85, 
@@ -472,10 +512,39 @@ leaflet(mpls_all) %>%
   
   18. Use `leaflet` to create a map of your own choosing. Come up with a question you want to try to answer and use the map to help answer that question. Describe what your map shows. 
   
+  Question: Which areas have the highest amount of stops per 1000 people?
+  
+```{r}
+mpls_all <- mpls_all %>% 
+  mutate(stops_per_1000 = (stops/population)*1000) 
+
+palette <- colorNumeric("magma", 
+                    mpls_all$stops_per_1000)
+
+leaflet(mpls_all) %>% 
+  addTiles() %>% 
+  addPolygons(stroke = FALSE,
+              fillColor = ~palette(stops_per_1000),
+              fillOpacity = 0.7,
+              popup = ~paste(BDNAME,": ",
+                            round(stops_per_1000, 2),
+                            sep=""),
+              highlight = highlightOptions(weight = 5,
+                                 fillOpacity = 0.9,
+                                 bringToFront = TRUE)) %>% 
+  addLegend(pal = palette, 
+            values = ~stops_per_1000, 
+            opacity = 0.75, 
+            title = NULL,
+            position = "bottomright")
+```
+  
+  This map shows that the highest rates of stops per 1000 people is mainly in the center of Minneapolis, with the outer counties generally having less stops per 1000 people.
+  
   
 ## GitHub link
 
   19. Below, provide a link to your GitHub page with this set of Weekly Exercises. Specifically, if the name of the file is 04_exercises.Rmd, provide a link to the 04_exercises.md file, which is the one that will be most readable on GitHub.
 
+[hw4 link](https://github.com/nolan-meyer/hw4-datasci/blob/main/04_exercises.md)
 
-**DID YOU REMEMBER TO UNCOMMENT THE OPTIONS AT THE TOP?**
