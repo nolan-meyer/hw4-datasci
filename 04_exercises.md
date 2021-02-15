@@ -810,6 +810,37 @@ ggplot() +
   
   13. **CHALLENGE** Choose 4 dates spread over the time period of the data and create the same map as in exercise 12 for each of the dates. Display the four graphs together using faceting. What do you notice?
   
+
+```r
+covid19_with_pop_dates <-
+  covid19 %>% 
+  group_by(state) %>% 
+  filter(date %in% c(as.Date("2020-04-01"), as.Date("2020-08-01"), as.Date("2020-12-01"), max(date))) %>% 
+  mutate(state = str_to_lower(state)) %>%  
+  left_join(census_pop_est_2018,
+            by = c("state" = "state")) %>% 
+  mutate(cases_per_10000 = (cases/est_pop_2018)*10000)
+
+covid19_with_pop_dates %>% 
+ggplot() +
+  geom_map(map = states_map,
+           aes(map_id = state,
+               fill = cases_per_10000)) +
+  facet_wrap(vars(date)) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  theme_map() +
+  labs(title = "Cumulative COVID cases per 10,000 people by state", fill = "") +
+  scale_fill_viridis_c(option = "inferno") +
+  theme(legend.background = element_blank(),
+        legend.position = c(.4, .52),
+        legend.direction = "horizontal")
+```
+
+![](04_exercises_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+  
+  This graph makes it easier to see which states changed the most over a certain time period. On Dec. 1, 2020, just west of the midwest had the highest cumukateive cases per 10,000, but then by Feb. 12, 2021, almost all of the state south of that region see a large influx in cases within that time frame.
+  
+  
 ## Minneapolis police stops
 
 These exercises use the datasets `MplsStops` and `MplsDemo` from the `carData` library. Search for them in Help to find out more information.
