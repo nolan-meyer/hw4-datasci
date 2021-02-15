@@ -743,7 +743,70 @@ The following exercises will use the COVID-19 data from the NYT.
 
   11. Create a map that colors the states by the most recent cumulative number of COVID-19 cases (remember, these data report cumulative numbers so you don't need to compute that). Describe what you see. What is the problem with this map?
   
+
+```r
+states_map <- map_data("state")
+
+covid19 %>% 
+  group_by(state) %>% 
+  filter(date == max(date)) %>% 
+  mutate(state = str_to_lower(state)) %>% 
+  ggplot() +
+  geom_map(map = states_map,
+           aes(map_id = state,
+               fill = cases/1000000)) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  theme_map() +
+  labs(title = "Cumulative COVID cases in millions by state", fill = "")
+```
+
+![](04_exercises_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+  
+  The main problem with this map is that it doesn't account for population, so the most populous states stand out with a high number of cumulative cases simply because they have a lot of people.
+  
+  
   12. Now add the population of each state to the dataset and color the states by most recent cumulative cases/10,000 people. See the code for doing this with the Starbucks data. You will need to make some modifications. 
+  
+
+```r
+census_pop_est_2018 <- read_csv("https://www.dropbox.com/s/6txwv3b4ng7pepe/us_census_2018_state_pop_est.csv?dl=1") %>%
+  separate(state, into = c("dot","state"), extra = "merge") %>% 
+  select(-dot) %>% 
+  mutate(state = str_to_lower(state))
+```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   state = col_character(),
+##   est_pop_2018 = col_double()
+## )
+```
+
+```r
+covid19_with_pop <-
+  covid19 %>% 
+  group_by(state) %>% 
+  filter(date == max(date)) %>% 
+  mutate(state = str_to_lower(state)) %>%  
+  left_join(census_pop_est_2018,
+            by = c("state" = "state")) %>% 
+  mutate(cases_per_10000 = (cases/est_pop_2018)*10000)
+
+covid19_with_pop %>% 
+ggplot() +
+  geom_map(map = states_map,
+           aes(map_id = state,
+               fill = cases_per_10000)) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  theme_map() +
+  labs(title = "Cumulative COVID cases per 10,000 people by state", fill = "") +
+  scale_fill_viridis_c(option = "inferno")
+```
+
+![](04_exercises_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+  
   
   13. **CHALLENGE** Choose 4 dates spread over the time period of the data and create the same map as in exercise 12 for each of the dates. Display the four graphs together using faceting. What do you notice?
   
