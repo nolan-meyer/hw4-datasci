@@ -418,9 +418,10 @@ color_pal <- colorFactor("plasma", MplsStops$problem)
 
 leaflet(data = MplsStops) %>% 
   addTiles() %>% 
-  addCircleMarkers(radius = 2,
+  addCircleMarkers(stroke = FALSE,
+                   weight = 10,
+                   radius = 4,
                    color = ~color_pal(problem)) %>% 
-
   addLegend(pal = color_pal, 
             values = ~problem, 
             opacity = 0.85, 
@@ -441,7 +442,33 @@ mpls_all <- mpls_nbhd %>%
             by = c("BDNAME" = "neighborhood"))
 ```
 
+
   17. Use `leaflet` to create a map from the `mpls_all` data  that colors the neighborhoods by `prop_suspicious`. Display the neighborhood name as you scroll over it. Describe what you observe in the map.
+  
+```{r}
+pal <- colorNumeric("plasma", 
+                    mpls_all$prop_sus)
+
+leaflet(mpls_all) %>% 
+  addTiles() %>% 
+  addPolygons(stroke = FALSE,
+              fillColor = ~pal(prop_sus),
+              fillOpacity = 0.7,
+              popup = ~paste(BDNAME,": ",
+                            round(prop_sus, 2),
+                            sep=""),
+              highlight = highlightOptions(weight = 5,
+                                 fillOpacity = 0.9,
+                                 bringToFront = TRUE)) %>% 
+  addLegend(pal = pal, 
+            values = ~prop_sus, 
+            opacity = 0.75, 
+            title = NULL,
+            position = "bottomright")
+```
+  
+  This map suggests that neighborhoods in the south east part of Minneapolis have greater rates of stops for suspicious activity.
+  
   
   18. Use `leaflet` to create a map of your own choosing. Come up with a question you want to try to answer and use the map to help answer that question. Describe what your map shows. 
   
